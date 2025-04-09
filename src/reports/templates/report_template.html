@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Analysis Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .recommendations {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 5px solid #4CAF50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Soil Analysis Report</h1>
+    
+    <h2>Summary</h2>
+    <p>This report provides an analysis of soil data collected from the samples.</p>
+    <p><strong>Soil Quality:</strong> {{ data.soil_quality }}</p>
+
+    <h2>Data Metrics</h2>
+    <h3>Mean Values</h3>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+        {% for key, value in data.metrics.mean_values.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ value|round(3) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Standard Deviation</h3>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+        {% for key, value in data.metrics.std_values.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ value|round(3) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Fertilizer Recommendations</h2>
+    <div class="recommendations">
+        {% if recommendations.error %}
+            <p>{{ recommendations.error }}</p>
+        {% elif recommendations.recommendations %}
+            <p>Based on soil analysis, the following fertilizer recommendations are suggested:</p>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Amount</th>
+                </tr>
+                {% for key, value in recommendations.recommendations.items() %}
+                <tr>
+                    <td>{{ key|replace('_', ' ')|title }}</td>
+                    <td>{{ value|round(2) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No specific fertilizer recommendations available.</p>
+        {% endif %}
+    </div>
+
+    <h2>Soil Improvement Recommendations</h2>
+    <div class="recommendations">
+        <p>Based on the analysis, the following recommendations are suggested:</p>
+        <ul>
+            {% for recommendation in data.recommendations %}
+            <li>{{ recommendation }}</li>
+            {% endfor %}
+        </ul>
+        {% if data.recommendations|length == 0 %}
+        <p>No specific soil improvement recommendations at this time.</p>
+        {% endif %}
+    </div>
+
+    <h2>Conclusion</h2>
+    <p>This soil analysis report provides guidance for optimal soil management. For best results, implement the recommendations and perform regular soil testing.</p>
+    <p>Report generated on: {{ now().strftime('%Y-%m-%d') }}</p>
+</body>
+</html>
